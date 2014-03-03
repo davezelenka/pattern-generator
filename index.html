@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<script src="js/jquery-2.0.2.js"></script>
+		<script src="js/bootstrap.js"></script>
+		<script src="js/main.js"></script>
+		<script src="js/processing.js"></script>
+		<script src="js/jscolor.js"></script>
+		<link href="css/bootstrap.css" rel="stylesheet">
+		<style>
+		table.zebra td.col1 {
+		width:10%;
+		}
+		table.zebra td.col3  {
+		width:10%;
+		text-align:right;
+		white-space:nowrap
+		}
+		table.zebra td.col2 {
+		width:80%;
+		}
+		table.zebra td.col2 input {
+		width:100%;
+		}
+		canvas {
+		width:100%
+		}
+		</style>
+</head>
+
+<body id="page" >
+
+		
+
+
+
+<div>
+<script type="application/processing">
+int xspacing = 1;   // How far apart should each horizontal location be spaced
+int w;              // Width of entire wave
+int fps =30;              // Width of entire wave
+
+float theta = 0.0;       // Start angle at 0
+int starttemp = 0;
+float amplitude = 75.0;  // Height of wave
+float period = 500.0;    // How many pixels before the wave repeats
+float dx;                 // Value for incrementing X, to be calculated as a function of period and xspacing
+float[] yvalues;   
+float[] xvalues;          // Using an array to store height values for the wave (not entirely necessary)
+int canvaswidth = 700;         
+int canvasheight = 500; 
+   
+float var2 = 2342;     
+float var1 = 177;            
+int var3 = 807;      
+int var5 = 606;       
+int var4 = 1;     
+int dir = 1;           
+int dots = 1500;          
+float dotsize = 11; 
+int alpha = 100;
+var color1 = "48AADB";
+var color2 = "000000";
+var color3 = "D7FF0F";
+
+document.getElementById("var2checkbox").checked = true;
+
+//2342, 177, 807, 606, 1, 1500, 11, 100, 48AADB, 000000, D7FF0F
+
+int dotsini   = dots;   
+int dotsizeini   = dotsize;
+int var1ini   = var1;  
+int var2ini   = var2;  
+int var3ini   = var3;  
+int var4ini   = var4;  
+int var5ini   = var5;   
+int alphaini   = alpha ;  
+
+var color1ini = color1;
+var color2ini = color2;  
+var color3ini = color3;   
+
+int toggle = 1;     
+//134:1:3556:1:3112
+
+
+void setup() {
+  size(canvaswidth,canvasheight);
+  startx = canvaswidth/1.8;         
+  starty = canvasheight/1.7;   
+  frameRate(fps);
+  colorMode(RGB,255,255,255,100);
+  smooth();
+  w = width+5;
+  dx = (TWO_PI / period) * xspacing;77
+ // yvalues = new float[w/xspacing*2];
+  //xvalues = new float[w/xspacing*2];
+  yvalues = new float[dots];
+  xvalues = new float[dots];
+  document.form1.dots.value = dots;
+  document.form1.dotsize.value = dotsize;
+  document.form1.var1.value = var1;
+  document.form1.var2.value = var2;
+  document.form1.var2field.value = var2;
+  document.form1.var3.value = var3;
+  document.form1.var3field.value = var3;
+  document.form1.var4.value = var4;
+  document.form1.var5.value = var5;
+  document.form1.var5field.value = var5;
+  document.form1.color1.value = color1;
+  document.form1.color2.value = color2;
+  document.form1.color3.value = color3;
+  document.form1.alpha.value = alpha;
+changeSliders()
+}
+
+void draw() {
+  background(255);
+  calcWave();
+  renderWave();
+
+}
+function resetIt() {
+ dots = dotsini;
+ dotsize = dotsizeini;
+ var1 = var1ini;
+  var2 = var2ini;
+  var3 = var3ini;
+  
+  var4 = var4ini;
+  var5 = var5ini;
+  color1 = color1ini;
+  color2 = color2ini;
+  color3 = color3ini;
+  alpha = alphaini;
+  document.form1.dots.value = dots;
+  document.form1.dotsize.value = dotsize;
+  document.form1.var1.value = var1;
+document.form1.var2.value = var2;
+document.form1.var2field.value = var2;
+document.form1.var3.value = var3;
+document.form1.var3field.value = var3;
+document.form1.var4.value = var4;
+document.form1.var5.value = var5;
+document.form1.var5field.value = var5;
+document.form1.color1.value = color1;
+document.form1.color2.value = color2;
+document.form1.color3.value = color3;
+document.form1.alpha.value = alpha;
+document.getElementById('stopbtn').value="Stop";
+		toggle = 1;
+document.getElementById("var2checkbox").checked = 1;
+changeSliders()
+}
+function resetParams() {
+// id="parameters"  type="text" name="paramsfield"
+parameter_array = document.form1.paramsfield.value.split(',');
+if (parameter_array.length != 12) {
+	alert('String does not contain enough elements. Must be 12 comma-delineated values.');
+} else {
+ 
+	  var2 = trim(parameter_array[0]);
+	 var1 = trim(parameter_array[1]);
+	  var3 = trim(parameter_array[2]);
+	  var5 = trim(parameter_array[3]);
+	  var4 = trim(parameter_array[4]);
+	  dots = trim(parameter_array[5]);
+	 dotsize = trim(parameter_array[6]);
+	  alpha = trim(parameter_array[7]);
+	  color1 = trim(parameter_array[8]);
+	  color2 = trim(parameter_array[9]);
+	  color3 = trim(parameter_array[10]);
+	  color3checked = trim(parameter_array[11]);
+	  
+	  document.form1.dots.value = dots;
+	  document.form1.dotsize.value = dotsize;
+	  document.form1.var1.value = var1;
+	document.form1.var2.value = var2;
+	document.form1.var2field.value = var2;
+	document.form1.var3.value = var3;
+	document.form1.var3field.value = var3;
+	document.form1.var4.value = var4;
+	document.form1.var5.value = var5;
+	document.form1.var5field.value = var5;
+	document.form1.color1.value = color1;
+	document.form1.color2.value = color2;
+	document.form1.color3.value = color3;
+	document.form1.alpha.value = alpha;
+	document.getElementById('stopbtn').value="Start";
+			toggle = 0;
+	document.getElementById("var2checkbox").checked = false;
+	if (color3checked == 1) {
+		document.getElementById("color3checkbox").checked = true;
+	} else {
+		document.getElementById("color3checkbox").checked = false;
+	}
+	changeSliders();
+}
+}
+
+function setInput() {
+if (isNaN(document.form1.dots.value)) document.form1.dots.value = 1500;
+if (document.form1.dots.value > 10000) {
+	document.form1.dots.value = 10000;
+} else if (document.form1.dots.value < 100) {
+	document.form1.dots.value = 100;
+}
+
+  dots = document.form1.dots.value;
+
+  var1 = document.form1.var1.value;
+  dotsize = document.form1.dotsize.value;
+  if (isNaN(document.form1.var2field.value)) {
+		var2 = document.form1.var2.value;
+	} else {
+		var2  = document.form1.var2field.value;
+	}
+	
+	
+  if (isNaN(document.form1.var3field.value)) {
+		var3 = document.form1.var3.value;
+	} else {
+		var3  = document.form1.var3field.value;
+	}
+  if (isNaN(document.form1.var5field.value)) {
+		var5 = document.form1.var5.value;
+	} else {
+		var5  = document.form1.var5field.value;
+	}
+	
+  var4 = document.form1.var4.value;
+  color1 = document.form1.color1.value;
+  color2 = document.form1.color2.value;
+  color3 = document.form1.color3.value;
+  alpha = document.form1.alpha.value;
+  if (document.form1.fps.value > 0 && document.form1.fps.value < 50) {
+		fps = document.form1.fps.value;
+	} else {
+		fps = 30;
+		document.form1.fps.value = fps;
+	}
+	frameRate(fps);
+//document.getElementById('stopbtn').value="Stop";
+		//toggle = 1;
+		starttemp=1;
+  writeParams();
+}
+function writeParams() {
+if (document.getElementById("color3checkbox").checked == 1) {
+	color3checked = 1;
+} else {
+	
+	color3checked = 0;
+}
+
+tmptxt = round(var2)+", "+document.form1.var1.value+", "+document.form1.var3.value+", "+document.form1.var5.value+", "+document.form1.var4.value+", "+document.form1.dots.value+", "+document.form1.dotsize.value+", "+document.form1.alpha.value+", "+document.form1.color1.value+", "+document.form1.color2.value+", "+document.form1.color3.value+", "+color3checked;
+document.getElementById('parameters').value = tmptxt;
+
+
+}
+
+void calcWave() {
+  // Increment theta (try different values for 'angular velocity' here
+  theta += 0.02;
+  column = 0;
+  row = 0;
+ // var1 = var1 + 0.15;
+  // For every x value, calculate a y value with sine function
+  float x = theta;
+  if (toggle == 1 || starttemp == 1) {
+	  for (int i = 0; i < dots; i++) {
+		
+		//x' = x cos f - y sin f
+		//y' = y cos f + x sin f
+		
+		yvalues[i]=starty+( (sin( column* var5/500 )*column/(((var4*.5)+9)*.1)) +(cos(-row*(var5/500))*var1)-200)/4; 
+		xvalues[i]=((cos( column*var5/500)*column/4) + ((sin(-row*(var5/500))*var1)-200)/4)+startx; 
+		//rotation
+		
+		var2 = Number(var2) + (.0001)*dir;
+		
+		if (var2 > 10000) var2 = 1000;
+		//if (var2 < 100) var2 = 1000;
+		column += (var2*.0001);
+		row += Number(var3);
+		//document.getElementById('var2input').innerHTML= round(var2);
+		
+		//document.form1.var2.value = round(var2);
+		if (document.getElementById("var2checkbox").checked ==1) document.form1.var2field.value = round(var2);
+	  }
+  }
+}
+
+
+void renderWave() {
+  // A simple way to draw the wave with an ellipse at each location
+
+  for (int x = 0; x < dots; x++) {
+   noStroke();
+if (x==0) j = 0;
+
+if (document.getElementById("color3checkbox").checked ==1) {
+	colortotal = 2;
+} else {
+	colortotal = 1;
+}
+if (j == 2) {
+  j = 0;
+  whichcolor = color3.replace(/^#+/i, '');
+} else if (j == 1) {
+  if (colortotal == 2) {
+	j = 2;
+  } else {
+	j = 0;
+  }
+  whichcolor = color2.replace(/^#+/i, '');
+} else {
+  j = 1;
+  whichcolor = color1.replace(/^#+/i, '');
+}
+
+r= parseInt((whichcolor).substring(0,2),16);
+g= parseInt((whichcolor).substring(2,4),16);
+b= parseInt((whichcolor).substring(4,6),16);
+    fill(r,g,b, alpha);
+    ellipseMode(CENTER);
+    ellipse(xvalues[x],yvalues[x],dotsize,dotsize);
+   //stroke(0);
+	//point(xvalues[x],yvalues[x]);
+	
+  }
+  
+
+  starttemp = 0;
+}
+
+
+function reverseIt() {
+dir *= -1;
+}
+function toggleIt() {
+	if ( toggle ==1) {
+		toggle = 0;
+		document.getElementById('stopbtn').value="Start";
+	} else {
+		document.getElementById('stopbtn').value="Stop";
+		toggle = 1;
+	}
+	writeParams();
+	
+	return false;
+}
+function stopIt() {
+		toggle = 0;
+		document.getElementById('stopbtn').value="Start";
+}
+
+function setValues() {
+	setInput();
+	return false;
+}
+function changeSliders() {
+  document.getElementById('dotsinput').innerHTML= document.form1.dots.value;
+  document.getElementById('dotsizeinput').innerHTML= document.form1.dotsize.value;
+  document.getElementById('alphainput').innerHTML= document.form1.alpha.value;
+  document.getElementById('var1input').innerHTML= document.form1.var1.value;
+  //document.getElementById('var2input').value = document.form1.var2.value;
+  document.getElementById('var3input').value= document.form1.var3.value;
+  document.getElementById('var4input').innerHTML= document.form1.var4.value;
+  document.getElementById('var5input').value= document.form1.var5.value;
+  
+   if (document.activeElement != document.getElementById('var2btn') &&  document.activeElement !=  document.getElementById('var2input')) {
+   
+	   document.form1.var2.value = round(var2);
+	   document.form1.var2field.value = round(var2);
+   }
+
+		
+setValues();
+}
+function changeSteps() {
+	if (isNaN(document.form1.var2field.value)) {
+		document.form1.var2field.value = document.form1.var2.value;
+	} else {
+		document.form1.var2.value  = document.form1.var2field.value;
+	}
+	if (isNaN(document.form1.var3field.value)) {
+		document.form1.var3field.value = document.form1.var3.value;
+	} else {
+		document.form1.var3.value  = document.form1.var3field.value;
+	}
+	if (isNaN(document.form1.var5field.value)) {
+		document.form1.var5field.value = document.form1.var5.value;
+	} else {
+		document.form1.var5.value  = document.form1.var5field.value;
+	}
+	changeSliders();
+}
+function changeSteps2() {
+	document.form1.var2field.value = Number(document.form1.var2.value);
+	var2 = document.form1.var2field.value;
+	changeSliders();
+	
+}
+function changeSteps3() {
+	document.form1.var3field.value = Number(document.form1.var3.value);
+	var3 = document.form1.var3field.value;
+	changeSliders();
+	
+}
+function changeSteps5() {
+	document.form1.var5field.value = Number(document.form1.var5.value);
+	var5 = document.form1.var5field.value;
+	changeSliders();
+	
+}
+
+function saveCanvas() {
+	PFont fontA = loadFont("Arial");
+	fill(0);
+	textFont(fontA, 12);
+	textAlign(LEFT);
+	text(tmptxt, 5, 15); 
+  save('file.png');
+  return false; 
+}
+document.getElementById("savepngbtn").onclick = function() { saveCanvas();}
+
+document.getElementById('stopbtn').onclick = function() { toggleIt(); }
+document.getElementById('revbtn').onclick = function() { reverseIt(); }
+document.getElementById('resetbtn').onclick = function() { resetIt(); }
+document.getElementById('resetparams').onclick = function() { resetParams(); }
+
+
+document.getElementById('dotsbtn').onchange = function() { changeSliders(); }
+document.getElementById('dotsizebtn').onchange = function() { changeSliders(); }
+document.getElementById('alphabtn').onchange = function() { changeSliders(); }
+document.getElementById('var1btn').onchange = function() { changeSliders(); }
+
+document.getElementById('var2btn').onchange = function() { changeSteps2(); }
+document.getElementById('var2input').onchange = function() { changeSteps(); }
+document.getElementById('var2input').onfocus = function() { stopIt(); }
+
+document.getElementById('var3btn').onchange = function() { changeSteps3(); }
+document.getElementById('var3input').onchange = function() { changeSteps(); }
+document.getElementById('var3input').onfocus = function() { stopIt(); }
+
+document.getElementById('var5btn').onchange = function() { changeSteps5(); }
+document.getElementById('var5input').onchange = function() { changeSteps(); }
+document.getElementById('var5input').onfocus = function() { stopIt(); }
+
+document.getElementById('var4btn').onchange = function() { changeSliders(); }
+document.getElementById('color1btn').onchange = function() { changeSliders(); }
+document.getElementById('color2btn').onchange = function() { changeSliders(); }
+document.getElementById('color3btn').onchange = function() { changeSliders(); }
+
+document.getElementById('fpsbtn').onchange = function() { changeSliders(); }
+
+
+
+</script>
+<canvas width="700" height="500"></canvas>
+<form name="form1" class="box style">
+
+<input id="savepngbtn" type="button" value="Save"  />
+
+<input id="revbtn" type="button" value="Rock"  />
+
+<input id="stopbtn" type="button" value="Stop"  />
+<input id="resetbtn" type="button" value="Reset" />
+
+
+
+
+
+<input id="aboutbtn" type="button" value="About"   onclick="location.href='/resources/general-activities/pattern-generator-sine-cosine/about.html'" />
+
+<table class="zebra" style="width:100%">
+<tbody>
+
+<tr><td class="col1">Steps</td><td class="col2"><input id="var2btn" name="var2" type="range" min="0" max="10000" /></td><td class="col3"><input title="Hide/Show::Hide the progress for quicker animations." id="var2checkbox"  type="checkbox" name="var2show"  value="1" style="" /><input id="var2input"  type="text" name="var2field" value="" style="width:40px" /></td></tr>
+
+<tr><td class="col1">Radius</td><td class="col2"><input id="var1btn" name="var1" type="range" min="1" max="500" /></td><td class="col3"><span id="var1input"></span></td></tr>
+<tr><td class="col1"><span title="Theta::Adjusts the value of a parameter." >Theta</span></td><td class="col2"><input id="var3btn" name="var3" type="range" min="1" max="5000" /></td><td class="col3"><input id="var3input"  type="text" name="var3field" value="" style="width:40px" /></td></tr>
+<tr><td class="col1"><span title="Base::Helpful for adjusting speed of animation." >Base</span></td><td class="col2"><input id="var5btn" name="var5" type="range" min="1" max="5000" /></td><td class="col3"><input id="var5input"  type="text" name="var5field" value="" style="width:40px" /></td></tr>
+<tr><td class="col1">Side View</td><td class="col2"><input id="var4btn" name="var4" type="range" min="1" max="100" /></td><td class="col3"><span id="var4input"></span></td></tr>
+<tr><td class="col1">Dots</td><td  class="col2"><input id="dotsbtn" name="dots" type="range" min="1" max="2500" /></td><td class="col3"><span id="dotsinput"></span></td></tr>
+<tr><td class="col1">Size</td><td class="col2"><input id="dotsizebtn" name="dotsize" type="range" min="1" max="100" /></td><td class="col3"><span id="dotsizeinput"></span></td></tr>
+<tr><td class="col1">Alpha</td><td class="col2"><input id="alphabtn" name="alpha" type="range" min="0" max="100" /></td><td class="col3"><span id="alphainput"></span></td></tr>
+
+
+<tr><td class="col1">Color 1</td><td class="col2"><input id="color1btn" class="color" type="text" name="color1" value="#DB6958" style="width:50px"  /></td><td class="col3">&nbsp;</td></tr>
+<tr><td class="col1">Color 2</td><td class="col2"><input id="color2btn" class="color" type="text" name="color2" value="#000000" style="width:50px"  /></td><td class="col3">&nbsp;</td></tr>
+<tr><td class="col1" >Color 3<input id="color3checkbox"  type="checkbox" name="color3show" checked value="1" style="" /></td><td class="col2"style="white-space:nowrap;"><input id="color3btn" class="color" type="text" name="color3" value="#CCCCCC" style="width:50px"  /></td><td class="col3">&nbsp;</td></tr>
+ 
+<tr><td class="col1">Parameters</td><td class="col2" ><input id="parameters"  type="text" name="paramsfield" value="" style="width:85%" /></td><td><input id="resetparams" type="button" value="Set" /></td></tr>
+<tr><td class="col1">FPS</td><td class="col2" ><input id="fpsbtn"  type="text" name="fps" value="" style="width:20px" /></td><td>&nbsp;</td></tr>
+
+
+</tbody>
+</table>
+
+
+
+
+
+<p>I discovered this logo mining tool in 2005 while developing a painting to represent <a href="http://www.biblegateway.com/passage/?search=genesis+1%3A2&version=NIV">Genesis 1:2</a>. Here are a few examples of the raw designs mined from this tool. (<a href="/resources/general-activities/pattern-generator-sine-cosine/48-examples-of-logo-mining.html">Examples 1</a>, <a href="/resources/general-activities/pattern-generator-sine-cosine/52-examples-of-logo-mining.html">Examples 2</a>, <a href="/resources/general-activities/pattern-generator-sine-cosine/53-examples-of-logo-mining.html">Examples 2</a>). This tool is based on phyllotaxis spirals and  Fibonacci's sequence.</p>
+</form>
+<p style="text-align:right">Javascript library courtesy of <a href="http://processingjs.org">Processing.js</a></p>
+		
+</div>
+</html>
